@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Change your executable name to something creative!
-set(NAME pico-boilerplate) # <-- Name your project/executable here!
+set(NAME Tufty2040Epic) # <-- Name your project/executable here!
 
 include(pico_sdk_import.cmake)
 include(pimoroni_pico_import.cmake)
@@ -25,12 +25,18 @@ include(common/pimoroni_i2c)
 include(common/pimoroni_bus)
 include(libraries/bitmap_fonts/bitmap_fonts)
 include(libraries/hershey_fonts/hershey_fonts)
-include(libraries/pico_explorer/pico_explorer)
+include(libraries/tufty2040/tufty2040)
+include(libraries/pico_graphics/pico_graphics)
+
+include(drivers/button/button)
+include(drivers/st7789/st7789)
 
 # Don't forget to link the libraries you need!
 target_link_libraries(${NAME}
-    pimoroni_i2c
-    pico_explorer # <-- List libraries here!
+    tufty2040
+    button
+    st7789
+    pico_graphics
 )
 
 # create map/bin/hex file etc.
