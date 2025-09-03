@@ -17,6 +17,9 @@ pico_sdk_init()
 # Add your source files
 add_executable(${NAME}
     main.cpp # <-- Add source files here!
+    garre.h
+    src/util/jpeg.hpp
+    src/util/jpeg.cpp
 )
 
 # Include required libraries
@@ -27,6 +30,7 @@ include(libraries/bitmap_fonts/bitmap_fonts)
 include(libraries/hershey_fonts/hershey_fonts)
 include(libraries/tufty2040/tufty2040)
 include(libraries/pico_graphics/pico_graphics)
+include(libraries/jpegdec/jpegdec)
 
 include(drivers/button/button)
 include(drivers/st7789/st7789)
@@ -37,6 +41,7 @@ target_link_libraries(${NAME}
     button
     st7789
     pico_graphics
+    jpegdec
 )
 
 # create map/bin/hex file etc.
