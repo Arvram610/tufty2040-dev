@@ -1,35 +1,26 @@
 #include <stdio.h>
 
 #include <algorithm>
-#include <button.hpp>
 #include <cstring>
 #include <string>
 #include <vector>
 
-#include "pico/platform.h"
+#include "pico.h"
 #include "pico/stdlib.h"
 #include "pico/time.h"
 #include "pico_graphics.hpp"
 #include "pimoroni_common.hpp"
-#include "st7789.hpp"
-#include "tufty2040.hpp"
+#include "src/common.hpp"
 
 using namespace pimoroni;
 
 Tufty2040 tufty;
 
-ST7789 st7789(Tufty2040::WIDTH, Tufty2040::HEIGHT, ROTATE_90,
-              ParallelPins{Tufty2040::LCD_CS, Tufty2040::LCD_DC,
-                           Tufty2040::LCD_WR, Tufty2040::LCD_RD,
-                           Tufty2040::LCD_D0, Tufty2040::BACKLIGHT});
+ST7789 st7789 = getSt7789(ROTATE_180);
 
-PicoGraphics_PenRGB332 graphics(st7789.width, st7789.height, nullptr);
+PicoGraphics_PenRGB565 graphics(st7789.width, st7789.height, nullptr);
 
-Button button_a(Tufty2040::A, Polarity::ACTIVE_HIGH);
-Button button_b(Tufty2040::B, Polarity::ACTIVE_HIGH);
-Button button_c(Tufty2040::C, Polarity::ACTIVE_HIGH);
-Button button_up(Tufty2040::UP, Polarity::ACTIVE_HIGH);
-Button button_down(Tufty2040::DOWN, Polarity::ACTIVE_HIGH);
+
 
 uint32_t time() {
   absolute_time_t t = get_absolute_time();
@@ -38,9 +29,10 @@ uint32_t time() {
 
 int main() {
   st7789.set_backlight(255);
+  static const Pen WHITE = graphics.create_pen(255, 255, 255);
+  static const Pen BLACK = graphics.create_pen(0, 0, 0);
+  static const Pen BG = graphics.create_pen(120, 40, 60);
 
-  Pen WHITE = graphics.create_pen(255, 255, 255);
-  Pen BG = graphics.create_pen(120, 40, 60);
   struct pt {
     float x;
     float y;
@@ -61,8 +53,11 @@ int main() {
     shapes.push_back(shape);
   }
 
+  //JPEGImage img1(&graphics, data::garre, sizeof(data::garre));
+
   Point text_location(0, 0);
   uint8_t i = 0;
+  uint32_t lastTime = 0u, thisTime;
 
   while (true) {
     graphics.set_pen(BG);
@@ -92,7 +87,10 @@ int main() {
       graphics.circle(Point(shape.x, shape.y), shape.r);
     }
 
-    graphics.set_pen(WHITE);
+    thisTime = time();
+    graphics.set_pen(BLACK);
+    graphics.text(std::to_string(1000 /(thisTime-lastTime)), text_location, 320);
+    lastTime = thisTime;
 
     // update screen
     st7789.update(&graphics);
