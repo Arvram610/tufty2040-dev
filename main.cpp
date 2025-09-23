@@ -18,8 +18,6 @@ Tufty2040 tufty;
 
 ST7789 st7789 = getSt7789(ROTATE_180);
 
-PicoGraphics_PenRGB565 graphics(st7789.width, st7789.height, nullptr);
-
 
 
 uint32_t time() {
@@ -28,10 +26,12 @@ uint32_t time() {
 }
 
 int main() {
+  programs[0]();
+  createGraphics(st7789);
   st7789.set_backlight(255);
-  static const Pen WHITE = graphics.create_pen(255, 255, 255);
-  static const Pen BLACK = graphics.create_pen(0, 0, 0);
-  static const Pen BG = graphics.create_pen(120, 40, 60);
+  static const Pen WHITE = graphics->create_pen(255, 255, 255);
+  static const Pen BLACK = graphics->create_pen(0, 0, 0);
+  static const Pen BG = graphics->create_pen(120, 40, 60);
 
   struct pt {
     float x;
@@ -44,12 +44,12 @@ int main() {
   std::vector<pt> shapes;
   for (int i = 0; i < 100; i++) {
     pt shape;
-    shape.x = rand() % graphics.bounds.w;
-    shape.y = rand() % graphics.bounds.h;
+    shape.x = rand() % graphics->bounds.w;
+    shape.y = rand() % graphics->bounds.h;
     shape.r = (rand() % 10) + 3;
     shape.dx = float(rand() % 255) / 64.0f;
     shape.dy = float(rand() % 255) / 64.0f;
-    shape.pen = graphics.create_pen(rand() % 255, rand() % 255, rand() % 255);
+    shape.pen = graphics->create_pen(rand() % 255, rand() % 255, rand() % 255);
     shapes.push_back(shape);
   }
 
@@ -60,8 +60,8 @@ int main() {
   uint32_t lastTime = 0u, thisTime;
 
   while (true) {
-    graphics.set_pen(BG);
-    graphics.clear();
+    graphics->set_pen(BG);
+    graphics->clear();
 
     for (auto &shape : shapes) {
       shape.x += shape.dx;
@@ -70,33 +70,32 @@ int main() {
         shape.dx *= -1;
         shape.x = shape.r;
       }
-      if ((shape.x + shape.r) >= graphics.bounds.w) {
+      if ((shape.x + shape.r) >= graphics->bounds.w) {
         shape.dx *= -1;
-        shape.x = graphics.bounds.w - shape.r;
+        shape.x = graphics->bounds.w - shape.r;
       }
       if ((shape.y - shape.r) < 0) {
         shape.dy *= -1;
         shape.y = shape.r;
       }
-      if ((shape.y + shape.r) >= graphics.bounds.h) {
+      if ((shape.y + shape.r) >= graphics->bounds.h) {
         shape.dy *= -1;
-        shape.y = graphics.bounds.h - shape.r;
+        shape.y = graphics->bounds.h - shape.r;
       }
 
-      graphics.set_pen(shape.pen);
-      graphics.circle(Point(shape.x, shape.y), shape.r);
+      graphics->set_pen(shape.pen);
+      graphics->circle(Point(shape.x, shape.y), shape.r);
     }
 
     thisTime = time();
-    graphics.set_pen(BLACK);
-    graphics.text(std::to_string(1000 /(thisTime-lastTime)), text_location, 320);
+    graphics->set_pen(BLACK);
+    graphics->text(std::to_string(1000 /(thisTime-lastTime)), text_location, 320);
     lastTime = thisTime;
 
     // update screen
-    st7789.update(&graphics);
+    st7789.update(graphics);
 
     i += 10;
     tufty.led(i);
   }
-  return 0;
 }
