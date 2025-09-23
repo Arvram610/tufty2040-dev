@@ -1,9 +1,15 @@
 #pragma once
 
-#include "tufty2040.hpp"
-#include "st7789.hpp"
+#include <tufty2040.hpp>
+#include <st7789.hpp>
 #include <button.hpp>
+#include <pico_graphics.hpp>
+#include <time.h>
+#include "pico.h"
+#include "pico/stdlib.h"
+#include "pico/time.h"
 #include "pico_graphics.hpp"
+#include "pimoroni_common.hpp"
 
 #include <vector>
 
@@ -14,20 +20,32 @@ pico::Button button_b(pico::Tufty2040::B, pico::Polarity::ACTIVE_HIGH);
 pico::Button button_c(pico::Tufty2040::C, pico::Polarity::ACTIVE_HIGH);
 pico::Button button_up(pico::Tufty2040::UP, pico::Polarity::ACTIVE_HIGH);
 pico::Button button_down(pico::Tufty2040::DOWN, pico::Polarity::ACTIVE_HIGH);
+pico::Button button_user(pico::Tufty2040::USER, pico::Polarity::ACTIVE_LOW);
 
-pico::ST7789 getSt7789(pico::Rotation rotation) {
+static pico::ST7789 *st7789 = nullptr;
+static pico::PicoGraphics *graphics = nullptr;
+
+void createSt7789(pico::Rotation rotation) {
     using namespace pico;
-    return {Tufty2040::WIDTH, Tufty2040::HEIGHT, rotation,
+    if (st7789) {
+        delete st7789;
+    }
+    st7789 = new ST7789(Tufty2040::WIDTH, Tufty2040::HEIGHT, rotation,
               ParallelPins{Tufty2040::LCD_CS, Tufty2040::LCD_DC,
                            Tufty2040::LCD_WR, Tufty2040::LCD_RD,
-                           Tufty2040::LCD_D0, Tufty2040::BACKLIGHT}};
+                           Tufty2040::LCD_D0, Tufty2040::BACKLIGHT});
 }
-static pico::PicoGraphics_PenRGB565 *graphics = nullptr;
-void createGraphics(pico::ST7789 st7789) {
+
+void createGraphics(pico::ST7789 *st7789) {
     if (graphics) {
         delete graphics;
     }
-    graphics = new pico::PicoGraphics_PenRGB565(st7789.width, st7789.height, nullptr);
+    graphics = new pico::PicoGraphics_PenRGB565(st7789->width, st7789->height, nullptr);
+}
+
+uint32_t time() {
+  absolute_time_t t = get_absolute_time();
+  return to_ms_since_boot(t);
 }
 
 
@@ -68,7 +86,7 @@ static inline void _register_runnable(Runnable fn, bool hidden) {
 }
 
 #define REGISTER_RUNNABLE(name, hidden) \
-    static void __name##_registrar(void) __attribute__((constructor)); \
-    static void name(); \
-    static void __name##_registrar(void) { _register_runnable(Runnable(name, #name), hidden); } \
-    static void name()
+    static void name##_registrar(void) __attribute__((constructor)); \
+    [[noreturn ]]static void name(); \
+    static void name##_registrar(void) { _register_runnable(Runnable(name, #name), hidden); } \
+    [[noreturn]] static void name()
