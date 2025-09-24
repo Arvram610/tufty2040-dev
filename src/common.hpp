@@ -31,6 +31,8 @@ static pico::PicoGraphics *graphics = nullptr;
 void createSt7789(pico::Rotation rotation) {
   using namespace pico;
   if (st7789) {
+    st7789->cleanup();
+    st7789->power_off();
     delete st7789;
   }
   st7789 = new ST7789(
@@ -41,6 +43,7 @@ void createSt7789(pico::Rotation rotation) {
 
 void createGraphics(pico::ST7789 *st7789) {
   if (graphics) {
+    delete[] (uint8_t *)graphics->frame_buffer;  // Why does it not delete the buffer on delete!?
     delete graphics;
   }
   graphics =
