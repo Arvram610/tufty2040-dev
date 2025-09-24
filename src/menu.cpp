@@ -10,6 +10,8 @@
 
 #include "common.hpp"
 
+REGISTER_RUNNABLE(test123, 0){}
+
 // Menu, automatically starts on launch
 int menu() {
   using namespace pimoroni;

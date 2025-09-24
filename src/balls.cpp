@@ -2,7 +2,7 @@
 
 using namespace pimoroni;
 
-REGISTER_RUNNABLE(secret_balls, 0) {
+REGISTER_RUNNABLE(secret_balls, 1) {
   st7789->set_backlight(255);
 
   Pen WHITE = graphics->create_pen(255, 255, 255);

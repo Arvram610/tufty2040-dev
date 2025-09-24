@@ -61,8 +61,10 @@ class Runnable {
   const RunnableFn fn;
 
  public:
-  const std::string name;
-  Runnable(RunnableFn fn, std::string name) : fn(fn), name(name) {}
+  std::string name;
+  Runnable(const RunnableFn fn, const std::string _name) : fn(fn) , name(_name){
+    std::replace(name.begin(), name.end(), '_', ' ');
+  }
 
   void operator()() { fn(); }
 };
