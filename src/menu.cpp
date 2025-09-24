@@ -10,7 +10,6 @@
 
 #include "common.hpp"
 
-
 // Menu, automatically starts on launch
 int menu() {
   using namespace pimoroni;
@@ -61,9 +60,8 @@ int menu() {
       if (std::equal(inputBuffer.begin(), inputBuffer.end(),
                      targetBuffer.begin())) {  // Secret :3
         pressTime = thisTime;
-        currentList = currentList == &programs ? &hidden_programs
-                                               : &programs;  
-        selected_item = 0;                                   // Reset scroll
+        currentList = currentList == &programs ? &hidden_programs : &programs;
+        selected_item = 0;  // Reset scroll
         scroll_position = 0;
         target_scroll_position = 0;
         continue;
@@ -132,7 +130,8 @@ int menu() {
     lastTime = thisTime;
 
     // update screen
-    while (st7789->is_busy()) {}
+    while (st7789->is_busy()) {
+    }
     st7789->update(graphics);
   }
 }
