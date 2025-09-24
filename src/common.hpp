@@ -15,6 +15,8 @@
 
 namespace pico = pimoroni;
 
+pico::Tufty2040 tufty;
+
 pico::Button button_a(pico::Tufty2040::A, pico::Polarity::ACTIVE_HIGH);
 pico::Button button_b(pico::Tufty2040::B, pico::Polarity::ACTIVE_HIGH);
 pico::Button button_c(pico::Tufty2040::C, pico::Polarity::ACTIVE_HIGH);
