@@ -23,7 +23,7 @@ pico::Button button_b(pico::Tufty2040::B, pico::Polarity::ACTIVE_HIGH);
 pico::Button button_c(pico::Tufty2040::C, pico::Polarity::ACTIVE_HIGH);
 pico::Button button_up(pico::Tufty2040::UP, pico::Polarity::ACTIVE_HIGH);
 pico::Button button_down(pico::Tufty2040::DOWN, pico::Polarity::ACTIVE_HIGH);
-pico::Button button_user(pico::Tufty2040::USER, pico::Polarity::ACTIVE_LOW);
+pico::Button button_user(23, pico::Polarity::ACTIVE_LOW);
 
 static pico::ST7789 *st7789 = nullptr;
 static pico::PicoGraphics *graphics = nullptr;
