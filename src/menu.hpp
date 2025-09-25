@@ -10,7 +10,8 @@
 
 #include "common.hpp"
 
-REGISTER_RUNNABLE(test123, 0){}
+REGISTER_RUNNABLE(test123, 0) {exit(0);}
+REGISTER_RUNNABLE(test321, 0) {exit(0);}
 
 // Menu, automatically starts on launch
 int menu() {
@@ -91,12 +92,12 @@ int menu() {
     graphics->set_pen(background_pen);
     graphics->clear();
 
-    static int thickness = 6;
-    for (int x = 0; x < st7789->width * 2; x += thickness) {
-      float h = 70 + x / thickness;
+    static int thickness = 2;
+    for (int y = 0; y < st7789->height / thickness; ++y) {
+      float h = 70 + y / (3*thickness);
       h = h / 30;
       graphics->set_pen(graphics->create_pen_hsv(h, 0.85, 1));
-      graphics->thick_line({x, 0}, {0, x}, thickness);
+      graphics->rectangle({0, y * thickness, st7789->width, thickness});
     }
 
     for (int list_index = 0; list_index < currentList->size(); ++list_index) {
@@ -128,12 +129,11 @@ int menu() {
                      text_size);
     }
 
-    graphics->text(std::to_string(1000 / (thisTime - lastTime)), {0, 0}, 320);
+    graphics->text(std::to_string(st7789->height), {0, 0}, 320);
+    //graphics->text(std::to_string(1000 / (thisTime - lastTime)), {0, 0}, 320);
     lastTime = thisTime;
 
     // update screen
-    while (st7789->is_busy()) {
-    }
     st7789->update(graphics);
   }
 }
